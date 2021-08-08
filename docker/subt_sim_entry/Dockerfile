@@ -1,5 +1,5 @@
 # Ubuntu 18.04 with nvidia-docker2 beta opengl support
-FROM osrf/subt-virtual-testbed:models_latest
+FROM subt_models:latest
 
 # Tools I find useful during development
 RUN sudo apt-get update -qq \
@@ -82,6 +82,7 @@ RUN sudo apt-get update \
 RUN sudo apt-get update \
  && sudo apt-get install -y \
     ros-melodic-ros-ign \
+    ros-melodic-perception-pcl \
  && sudo apt-get clean -qq
 
 # Make a couple folders for organizing docker volumes
@@ -91,11 +92,10 @@ RUN mkdir ~/workspaces ~/other
 WORKDIR /home/$USERNAME
 
 # Install subt sim
-RUN mkdir -p subt_ws/src \
- && cd subt_ws/src \
- && git config --global http.postBuffer 1048576000 \
- && git clone https://github.com/osrf/subt
-
+RUN mkdir -p subt_ws/src/subt 
+# && git config --global http.postBuffer 1048576000 \
+# && git clone https://github.com/osrf/subt
+COPY subt_sim_entry/src subt_ws/src/subt/
 # Install dependencies
 RUN . /opt/ros/melodic/setup.sh \
  && rosdep update \
@@ -111,7 +111,7 @@ RUN . /opt/ros/melodic/setup.sh \
 
 WORKDIR /home/$USERNAME/subt_ws
 
-RUN /bin/bash -c 'source /opt/ros/melodic/setup.bash && catkin_make -DCMAKE_BUILD_TYPE=Release install'
+RUN /bin/bash -c 'source /opt/ros/melodic/setup.bash && catkin_make clean && catkin_make -DCMAKE_BUILD_TYPE=Release install'
 RUN /bin/sh -c 'echo ". /opt/ros/melodic/setup.bash" >> ~/.bashrc' \
  && /bin/sh -c 'echo ". ~/subt_ws/install/setup.sh" >> ~/.bashrc'
 

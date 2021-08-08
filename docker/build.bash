@@ -39,8 +39,16 @@ image_name=$(basename $1)
 image_plus_tag=$image_name:latest-$(date +%F_%H%M)
 
 shift
+non_docker_dirs=$(ls ../ | grep -v docker)
+echo $non_docker_dirs
+mkdir -p $DIR/$image_name/src
+for item in $non_docker_dirs 
+do
 
+    cp -r ../$item $DIR/$image_name/src/
+done
 docker build --rm -t $image_plus_tag --build-arg user_id=$user_id "$@" -f $DIR/$image_name/Dockerfile .
 docker tag $image_plus_tag $image_name:latest
+rm -r $DIR/$image_name/src
 
 echo "Built $image_plus_tag and tagged as $image_name:latest"

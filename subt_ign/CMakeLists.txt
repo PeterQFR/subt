@@ -225,54 +225,54 @@ install(
 )
 
 # Unzip the cave_circuit_practice_02.dat.zip file
-add_custom_target(unzip_dat ALL)
-add_custom_command(TARGET unzip_dat PRE_BUILD
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds
-  COMMAND ${CMAKE_COMMAND} -E tar xvf cave_circuit_practice_02.dat.zip
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit_practice_02.dat.zip
-COMMENT "Unpacking cave_circuit_practice_02.dat.zip"
-VERBATIM)
-
+#add_custom_target(unzip_dat ALL)
+#add_custom_command(TARGET unzip_dat PRE_BUILD
+#  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds
+#  COMMAND ${CMAKE_COMMAND} -E tar xvfz cave_circuit_practice_02.dat.zip
+#  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit_practice_02.dat.zip
+#COMMENT "Unpacking cave_circuit_practice_02.dat.zip"
+#VERBATIM)
+#
 # Unzip the cave_circuit_03.dat.zip file
-add_custom_command(TARGET unzip_dat PRE_BUILD
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/03
-  COMMAND ${CMAKE_COMMAND} -E tar xvf cave_circuit_03.dat.zip
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/03/cave_circuit_03.dat.zip
-COMMENT "Unpacking cave_circuit_03.dat.zip"
-VERBATIM)
-
+#add_custom_command(TARGET unzip_dat PRE_BUILD
+#  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/03
+#  COMMAND ${CMAKE_COMMAND} -E tar xvfz cave_circuit_03.dat.zip
+#  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/03/cave_circuit_03.dat.zip
+#COMMENT "Unpacking cave_circuit_03.dat.zip"
+#VERBATIM)
+#
 # Unzip the cave_circuit_04.dat.zip file
-add_custom_command(TARGET unzip_dat PRE_BUILD
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/04
-  COMMAND ${CMAKE_COMMAND} -E tar xvf cave_circuit_04.dat.zip
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/04/cave_circuit_04.dat.zip
-COMMENT "Unpacking cave_circuit_04.dat.zip"
-VERBATIM)
-
+#add_custom_command(TARGET unzip_dat PRE_BUILD
+#  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/04
+#  COMMAND ${CMAKE_COMMAND} -E tar xvfz cave_circuit_04.dat.zip
+#  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/04/cave_circuit_04.dat.zip
+#COMMENT "Unpacking cave_circuit_04.dat.zip"
+#VERBATIM)
+#
 # Unzip the cave_circuit_07.dat.zip file
-add_custom_command(TARGET unzip_dat PRE_BUILD
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/07/
-  COMMAND ${CMAKE_COMMAND} -E tar xvf cave_circuit_07.dat.zip
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/07/cave_circuit_07.dat.zip
-  BYPRODUCTS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/07/cave_circuit_07.dat
-COMMENT "Unpacking cave_circuit_07.dat.zip"
-VERBATIM)
-
+#add_custom_command(TARGET unzip_dat PRE_BUILD
+#  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/07/
+#  COMMAND ${CMAKE_COMMAND} -E tar xvfz cave_circuit_07.dat.zip
+#  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/07/cave_circuit_07.dat.zip
+#  BYPRODUCTS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/07/cave_circuit_07.dat
+#COMMENT "Unpacking cave_circuit_07.dat.zip"
+#VERBATIM)
+#
 # Unzip the cave_circuit_08.dat.zip file
-add_custom_command(TARGET unzip_dat PRE_BUILD
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/08
-  COMMAND ${CMAKE_COMMAND} -E tar xvf cave_circuit_08.dat.zip
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/08/cave_circuit_08.dat.zip
-COMMENT "Unpacking cave_circuit_08.dat.zip"
-VERBATIM)
-
+#add_custom_command(TARGET unzip_dat PRE_BUILD
+#  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/08
+#  COMMAND ${CMAKE_COMMAND} -E tar xvfz cave_circuit_08.dat.zip
+#  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/cave_circuit/08/cave_circuit_08.dat.zip
+#COMMENT "Unpacking cave_circuit_08.dat.zip"
+#VERBATIM)
+#
 # Unzip the finals_practice_03.dat.zip file
-add_custom_command(TARGET unzip_dat PRE_BUILD
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds
-  COMMAND ${CMAKE_COMMAND} -E tar xvf finals_practice_03.dat.zip
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/finals_practice_03.dat.zip
-COMMENT "Unpacking finals_practice_03.dat.zip"
-VERBATIM)
+#add_custom_command(TARGET unzip_dat PRE_BUILD
+#  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds
+#  COMMAND ${CMAKE_COMMAND} -E tar xvf finals_practice_03.dat.zip
+#  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/finals_practice_03.dat.zip
+#COMMENT "Unpacking finals_practice_03.dat.zip"
+#VERBATIM)
 
 install(PROGRAMS
   scripts/subt_docker.bash
