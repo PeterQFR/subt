@@ -1,24 +1,24 @@
 # Logitech F710 DInput mode
 # to check your joy control: sudo jstest /dev/input/js0
 
-axis_linear: 1  # Left thumb stick vertical
+axis_linear: 4  # Left thumb stick vertical
 scale_linear: 0.7
 scale_linear_turbo: 1.5
 axis_angular: 0  # Left thumb stick horizontal
 scale_angular: 0.4
 scale_angular_turbo: 0.8
 
-axis_vertical: 3  # Right thumb stick vertical
+axis_vertical: 1  # Right thumb stick vertical
 scale_vertical: 50
 scale_vertical_turbo: 150
-axis_horizontal: 2  # Right thumb stick horizontal
+axis_horizontal: 3  # Right thumb stick horizontal
 scale_horizontal: 0.7
 scale_horizontal_turbo: 1.5
 
 flippers_use_axes: True
-axis_front_flippers: 5
+axis_front_flippers: 6
 scale_front_flippers: 0.5
-axis_rear_flippers: 4
+axis_rear_flippers: 7
 scale_rear_flippers: 0.5
 
 enable_button: 4  # Left button (LB)
