@@ -99,6 +99,7 @@ docker run -it \
   -v "/etc/localtime:/etc/localtime:ro" \
   -v "/dev/input:/dev/input" \
   --network host \
+  --name simulation \
   --rm \
   --privileged \
   --security-opt seccomp=unconfined \
