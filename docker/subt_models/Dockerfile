@@ -1,5 +1,5 @@
 # Ubuntu 18.04 with nvidia-docker2 beta opengl support
-FROM nvidia/opengl:1.0-glvnd-devel-ubuntu18.04
+FROM nvidia/opengl:1.0-glvnd-devel-ubuntu20.04
 
 RUN export DEBIAN_FRONTEND=noninteractive \
  && apt-get update \

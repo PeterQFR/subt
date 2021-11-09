@@ -26,8 +26,8 @@ RUN sudo apt-get update -qq \
         python3-setuptools \
         python3-pip \
         python3-venv \
-        ruby2.5 \
-        ruby2.5-dev \
+        ruby2.7 \
+        ruby2.7-dev \
         software-properties-common \
         vim \
         net-tools \
@@ -45,24 +45,26 @@ RUN gcc --version
 RUN pip3 install --upgrade awscli=="1.16.220"
 VOLUME /root/.aws
 
+ARG DEBIAN_FRONTEND=noninteractive
+RUN sudo apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive apt-get install keyboard-configuration -y
 # install ROS and required packages
 RUN sudo /bin/sh -c 'echo "deb [trusted=yes] http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' \
  && sudo apt-get update -qq \
- && sudo apt-get install -y -qq \
-    python-catkin-tools \
-    python-rosdep \
-    python-rosinstall \
-    ros-melodic-desktop \
-    ros-melodic-joystick-drivers \
-    ros-melodic-pointcloud-to-laserscan \
-    ros-melodic-robot-localization \
-    ros-melodic-spacenav-node \
-    ros-melodic-tf2-sensor-msgs \
-    ros-melodic-twist-mux \
-    ros-melodic-rviz-imu-plugin \
-    ros-melodic-rotors-control \
-    ros-melodic-theora-image-transport \
- && sudo rosdep init \
+ && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq  \
+    python3-catkin-tools \
+    python3-rosdep \
+    python3-rosinstall \
+    ros-noetic-desktop \
+    ros-noetic-joy \
+    ros-noetic-pointcloud-to-laserscan \
+    ros-noetic-robot-localization \
+    ros-noetic-spacenav-node \
+    ros-noetic-tf2-sensor-msgs \
+    ros-noetic-twist-mux \
+    ros-noetic-rviz-imu-plugin \
+#    ros-noetic-rotors-control \
+    ros-noetic-theora-image-transport 
+RUN DEBIAN_FRONTEND=noninteractive sudo rosdep init \
  && sudo apt-get clean
 
 # sdformat8-sdf conflicts with sdformat-sdf installed from gazebo
@@ -74,15 +76,15 @@ RUN sudo /bin/sh -c 'echo "deb [trusted=yes] http://packages.osrfoundation.org/g
 
 # install ign-dome
 RUN sudo apt-get update \
-&&  sudo apt-get install -y \
+&&  DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -qq \
     ignition-dome \
  && sudo apt-get clean
 
 # install the ros to ign bridge
 RUN sudo apt-get update \
- && sudo apt-get install -y \
-    ros-melodic-ros-ign \
-    ros-melodic-perception-pcl \
+ && DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -qq \
+    ros-noetic-ros-ign \
+    ros-noetic-perception-pcl \
  && sudo apt-get clean -qq
 
 # Make a couple folders for organizing docker volumes
@@ -97,10 +99,10 @@ RUN mkdir -p subt_ws/src/subt
 # && git clone https://github.com/osrf/subt
 COPY subt_sim_entry/src subt_ws/src/subt/
 # Install dependencies
-RUN . /opt/ros/melodic/setup.sh \
+RUN . /opt/ros/noetic/setup.sh \
  && rosdep update \
  && sudo apt-get update \
- && rosdep install -y --from-paths . --ignore-src -r \
+ && DEBIAN_FRONTEND=noninteractive rosdep install -y --from-paths . --ignore-src -r \
     --skip-keys=ignition-transport9 \
     --skip-keys=ignition-math6 \
     --skip-keys=ignition-msgs6 \
@@ -109,10 +111,25 @@ RUN . /opt/ros/melodic/setup.sh \
     --skip-keys=ignition-launch2 \
  && sudo apt-get clean -qq
 
-WORKDIR /home/$USERNAME/subt_ws
 
-RUN /bin/bash -c 'source /opt/ros/melodic/setup.bash && catkin_make clean && catkin_make -DCMAKE_BUILD_TYPE=Release install'
-RUN /bin/sh -c 'echo ". /opt/ros/melodic/setup.bash" >> ~/.bashrc' \
+RUN mkdir -p /home/$USERNAME/other_ws/src 
+WORKDIR /home/$USERNAME/other_ws
+RUN cd src && git clone https://github.com/ethz-asl/rotors_simulator.git \
+        && git clone https://github.com/ethz-asl/mav_comm.git \
+        && cd rotors_simulator && rm -rf \
+        rotors_comm \
+        rotors_gazebo \
+        rotors_simulator \
+        rotors_description \
+        rotors_evaluation \
+        rotors_gazebo_plugins \
+        rotors_hil_interface \
+        rotors_joy_interface \
+        rqt_rotors
+RUN /bin/bash -c 'source /opt/ros/noetic/setup.bash && catkin_make clean && catkin_make -DCMAKE_BUILD_TYPE=Release install'
+WORKDIR /home/$USERNAME/subt_ws
+RUN /bin/bash -c 'source /home/$USERNAME/other_ws/install/setup.bash && catkin_make clean && catkin_make  -DCMAKE_BUILD_TYPE=Release install'
+RUN /bin/sh -c 'echo ". /opt/ros/noetic/setup.bash" >> ~/.bashrc' \
  && /bin/sh -c 'echo ". ~/subt_ws/install/setup.sh" >> ~/.bashrc'
 
 # Create a directory required by cloudsim
