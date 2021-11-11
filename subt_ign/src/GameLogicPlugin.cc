@@ -47,6 +47,7 @@
 #include <ignition/gazebo/components/GpuLidar.hh>
 #include <ignition/gazebo/components/RgbdCamera.hh>
 #include <ignition/gazebo/components/ParentEntity.hh>
+#include <ignition/gazebo/components/ParticleEmitter.hh>
 #include <ignition/gazebo/components/Pose.hh>
 #include <ignition/gazebo/components/Sensor.hh>
 #include <ignition/gazebo/components/Static.hh>
@@ -227,6 +228,13 @@ class subt::GameLogicPluginPrivate
   /// \param[in] _info Message information.
   public: void OnDynamicCollapseDeployRemainingEvent(
     const ignition::msgs::Int32 &_msg,
+    const transport::MessageInfo &_info);
+
+  /// \brief Fog command subscription callback.
+  /// \param[in] _msg Particle emitter message.
+  /// \param[in] _info Message information.
+  public: void OnFogCmdEvent(
+    const ignition::msgs::ParticleEmitter &_msg,
     const transport::MessageInfo &_info);
 
   /// \brief Rock fall remaining subscription callback.
@@ -570,6 +578,9 @@ class subt::GameLogicPluginPrivate
   // less violent collision will disable the robot. This value can be
   // adjusted via this plugin's SDF parameters.
   public: double keHeight = 0.077;
+
+  /// \brief The fog emitters.
+  public: std::set<std::string> fogEmitters;
 };
 
 //////////////////////////////////////////////////
@@ -765,6 +776,12 @@ void GameLogicPlugin::Configure(const ignition::gazebo::Entity & /*_entity*/,
     this->dataPtr->worldName.find("final") != std::string::npos ? 25 :
     this->dataPtr->reportCountLimit;
 
+  if (this->dataPtr->worldName == "finals_systems_prize")
+  {
+    this->dataPtr->reportCountLimit = 45;
+    this->dataPtr->artifactCount = 40;
+  }
+
   // Make sure that there are score files.
   this->dataPtr->UpdateScoreFiles(this->dataPtr->simTime);
 }
@@ -912,6 +929,38 @@ void GameLogicPluginPrivate::OnDynamicCollapseDeployRemainingEvent(
         "dynamic_collapse", this->eventCounter);
     this->eventCounter++;
     this->dynamicCollapseMax[name] = true;
+  }
+}
+
+//////////////////////////////////////////////////
+void GameLogicPluginPrivate::OnFogCmdEvent(
+    const ignition::msgs::ParticleEmitter &_msg,
+    const transport::MessageInfo &_info)
+{
+  ignition::msgs::Time localSimTime(this->simTime);
+  std::vector<std::string> topicParts = common::split(_info.Topic(), "/");
+  std::string name = "_unknown_";
+
+  // Get the name of the model from the topic name, where the topic name
+  // look like '/model/{model_name}/...
+  if (topicParts.size() > 1)
+    name = topicParts[1];
+
+  if (_msg.has_emitting() && _msg.emitting().data())
+  {
+    std::lock_guard<std::mutex> lock(this->eventCounterMutex);
+    std::ostringstream stream;
+    stream
+      << "- event:\n"
+      << "  id: " << this->eventCounter << "\n"
+      << "  type: fog\n"
+      << "  time_sec: " << localSimTime.sec() << "\n"
+      << "  model: " << name << std::endl;
+
+    this->LogEvent(stream.str());
+    this->PublishRegionEvent(localSimTime, "fog", "", name, "fog",
+        this->eventCounter);
+    this->eventCounter++;
   }
 }
 
@@ -1070,7 +1119,7 @@ void GameLogicPluginPrivate::OnEvent(const ignition::msgs::Pose &_msg)
         // there should be only 1 key-value pair. Just in case, we will grab
         // only the first. The key is currently always "type", which we can
         // ignore when sending the ROS message.
-        if (regionEventType.empty())
+        if (regionEventType.empty() && data.first == "type")
         {
           if (data.second.find("performer_detector_rockfall") ==
               std::string::npos)
@@ -1204,7 +1253,10 @@ void GameLogicPlugin::PreUpdate(const UpdateInfo &_info,
     for (auto &ke : this->dataPtr->keInfo)
     {
       ignition::gazebo::Link link(ke.second.link);
-      if (std::nullopt != link.WorldKineticEnergy(_ecm))
+      if (std::nullopt != link.WorldKineticEnergy(_ecm) &&
+          robotPlatformTypes.find(
+          this->dataPtr->robotFullTypes[ke.second.robotName].first) !=
+          robotPlatformTypes.end())
       {
         double currKineticEnergy = *link.WorldKineticEnergy(_ecm);
 
@@ -1242,6 +1294,9 @@ void GameLogicPlugin::PreUpdate(const UpdateInfo &_info,
             << "- event:\n"
             << "  id: " << this->dataPtr->eventCounter << "\n"
             << "  type: collision\n"
+            << "  ke: " << deltaKE  << "\n"
+            << "  ke_threshold: " << ke.second.kineticEnergyThreshold  << "\n"
+            << "  link: " << *link.Name(_ecm) << "\n"
             << "  time_sec: " << localSimTime.sec() << "\n"
             << "  robot: " << ke.second.robotName << std::endl;
           this->dataPtr->LogEvent(stream.str());
@@ -1254,7 +1309,10 @@ void GameLogicPlugin::PreUpdate(const UpdateInfo &_info,
             _ecm.Component<components::HaltMotion>(ke.first);
           if (haltMotionComp && !haltMotionComp->Data())
           {
-            igndbg << "Robot[" << ke.second.robotName  << "] has crashed!\n";
+            igndbg << "Robot[" << ke.second.robotName  << "] has crashed "
+              << "with a KE of [" << deltaKE << "] and a KE threshold "
+              << "of [" << ke.second.kineticEnergyThreshold << "] on "
+              << "link [" << *link.Name(_ecm) << "]!\n";
             haltMotionComp->Data() = true;
           }
         }
@@ -1309,6 +1367,44 @@ void GameLogicPlugin::PostUpdate(
           }
           return true;
         });
+
+    // This function is used to record the presence of a TEAMBASE model.
+    _ecm.EachNew<gazebo::components::ParentEntity>(
+        [&](const gazebo::Entity &,
+            const gazebo::components::ParentEntity *_parent) -> bool
+    {
+          // Get the model.
+          auto model = _ecm.Component<gazebo::components::ParentEntity>(
+              _parent->Data());
+          if (model)
+          {
+            ignition::gazebo::Model mdl(model->Data());
+
+            // Get the teambase_link, which should only be present in a
+            // TEAMBASE model
+            ignition::gazebo::Entity teambaseLink = mdl.LinkByName(_ecm,
+                "teambase_link");
+
+            // Get the filepath for the model, which should be empty for
+            // the TEAMBASE model since it is created via an
+            // Ignition launch file.
+            auto filePath =
+              _ecm.Component<gazebo::components::SourceFilePath>(
+              model->Data());
+
+            // Confirm that the model has the teambase_link and no filepath.
+            // Then store this model as the TEAMBASE.
+            if (filePath && filePath->Data().empty() && teambaseLink !=
+                ignition::gazebo::kNullEntity )
+            {
+              // Get the model name
+              auto mName = mdl.Name(_ecm);
+              this->dataPtr->robotNames.insert(mName);
+              this->dataPtr->robotFullTypes[mName] = {"TEAMBASE", "TEAMBASE"};
+            }
+          }
+          return true;
+    });
 
     _ecm.Each<gazebo::components::Sensor,
               gazebo::components::ParentEntity>(
@@ -1414,6 +1510,42 @@ void GameLogicPlugin::PostUpdate(
       this->dataPtr->Start(this->dataPtr->simTime);
     }
   }
+
+  // Subscribe to fog emitter command events.
+  _ecm.Each<gazebo::components::ParticleEmitter,
+            gazebo::components::ParentEntity,
+            gazebo::components::Name>(
+      [&](const gazebo::Entity &,
+          const gazebo::components::ParticleEmitter *,
+          const gazebo::components::ParentEntity *_parent,
+          const gazebo::components::Name *_nameComp) -> bool
+      {
+        auto model = _ecm.Component<gazebo::components::ParentEntity>(
+            _parent->Data());
+        if (model && _nameComp->Data().find("fog") != std::string::npos)
+        {
+          // Get the model name
+          auto modelName =
+            _ecm.Component<gazebo::components::Name>(model->Data());
+          if (modelName)
+          {
+            std::string fogTopic = std::string("/model/") +
+              modelName->Data() + "/link/link/particle_emitter/" +
+              _nameComp->Data() + "/cmd";
+
+            if (this->dataPtr->fogEmitters.find(fogTopic) ==
+                this->dataPtr->fogEmitters.end())
+            {
+              this->dataPtr->fogEmitters.insert(fogTopic);
+              this->dataPtr->node.Subscribe(fogTopic,
+                  &GameLogicPluginPrivate::OnFogCmdEvent,
+                  this->dataPtr.get());
+            }
+          }
+        }
+
+        return true;
+      });
 
   // Update pose information
   _ecm.Each<gazebo::components::Model,
@@ -2305,6 +2437,10 @@ bool GameLogicPluginPrivate::OnFinishCall(const ignition::msgs::Boolean &_req,
   ignition::msgs::Time localSimTime(this->simTime);
   if (this->started && _req.data() && !this->finished)
   {
+    ignmsg << "User triggered OnFinishCall." << std::endl;
+    this->Log(localSimTime) << "User triggered OnFinishCall." << std::endl;
+    this->logStream.flush();
+
     this->Finish(localSimTime);
     _res.set_data(true);
   }
