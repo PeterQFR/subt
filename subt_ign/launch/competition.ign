@@ -73,9 +73,9 @@
 
   # spawn world offset
   if $circuit == "urban"
-    spawnWorldXPos = 6
-    spawnWorldYPos = 27
-    spawnWorldZPos = 7.5
+    spawnWorldXPos = 16
+    spawnWorldYPos = 10
+    spawnWorldZPos = 14
     spawnWorldYaw = 0
     guiCameraPose = "-2.0 27 15 0 0.868 0"
   elsif $circuit == "finals"
@@ -248,7 +248,7 @@
 
 <%
   # disable levels for simple cave worlds
-  $levels = "true"
+  $levels = "false"
   if $worldName.include?('simple_cave_') || $worldName.include?('cave_qual')
     $levels = "false"
   end
