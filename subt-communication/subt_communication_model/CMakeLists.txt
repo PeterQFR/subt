@@ -16,12 +16,12 @@ set(RUN_DEPENDS
 #######################################
 
 find_package(catkin REQUIRED ${BUILD_DEPENDS})
-find_package(ignition-common3 REQUIRED)
+find_package(ignition-common4 REQUIRED)
 
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${ignition-common3_INCLUDE_DIRS}
+  ${ignition-common4_INCLUDE_DIRS}
   )
 
 set(project_libs

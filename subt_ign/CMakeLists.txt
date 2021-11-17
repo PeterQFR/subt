@@ -24,19 +24,19 @@ find_package(catkin REQUIRED
     rosbag
 )
 
-find_package(ignition-gazebo4 REQUIRED)
+find_package(ignition-gazebo6 REQUIRED)
 set(IGN_GAZEBO_VER ${ignition-gazebo4_VERSION_MAJOR})
 
 file(MAKE_DIRECTORY ${CATKIN_DEVEL_PREFIX}/include)
 
-find_package(ignition-common3 REQUIRED COMPONENTS graphics)
-find_package(ignition-fuel_tools5 REQUIRED)
+find_package(ignition-common4 REQUIRED COMPONENTS graphics)
+find_package(ignition-fuel_tools7 REQUIRED)
 find_package(ignition-math6 REQUIRED)
-find_package(ignition-msgs6 REQUIRED)
-find_package(ignition-transport9 REQUIRED)
+find_package(ignition-msgs8 REQUIRED)
+find_package(ignition-transport11 REQUIRED)
 find_package(ignition-plugin1 REQUIRED COMPONENTS loader register)
-find_package(ignition-launch3 REQUIRED)
-find_package(sdformat10 REQUIRED)
+find_package(ignition-launch5 REQUIRED)
+find_package(sdformat12 REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
 find_package(PkgConfig REQUIRED)
@@ -81,7 +81,7 @@ set_target_properties(${protobuf_lib_name}
   PROPERTIES POSITION_INDEPENDENT_CODE ON COMPILE_FLAGS "-Wno-unused-parameter" )
 target_link_libraries(${protobuf_lib_name}
   PRIVATE
-  ignition-msgs6::ignition-msgs6
+  ignition-msgs8::ignition-msgs8
 )
 install(TARGETS ${protobuf_lib_name}
   ARCHIVE DESTINATION lib
@@ -113,13 +113,13 @@ target_include_directories(SubtCommon
 
 target_link_libraries(SubtCommon
   PUBLIC
-  ignition-gazebo${IGN_GAZEBO_VER}::core
-  ignition-common3::ignition-common3
-  ignition-common3::graphics
-  ignition-transport9::ignition-transport9
-  ignition-transport9::ignition-transport9-log
-  ignition-launch3::ignition-launch3
-  ignition-fuel_tools5::ignition-fuel_tools5
+  ignition-gazebo6::core
+  ignition-common4::ignition-common4
+  ignition-common4::graphics
+  ignition-transport11::ignition-transport11
+  ignition-transport11::ignition-transport11-log
+  ignition-launch5::ignition-launch5
+  ignition-fuel_tools7::ignition-fuel_tools7
   ${catkin_LIBRARIES}
   ${LIBFCL_LIBRARIES}
   ${YAML_CPP_LIBRARIES}
@@ -225,7 +225,7 @@ install(
 )
 
 # Unzip the cave_circuit_practice_02.dat.zip file
-#add_custom_target(unzip_dat ALL)
+add_custom_target(unzip_dat ALL)
 #add_custom_command(TARGET unzip_dat PRE_BUILD
 #  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds
 #  COMMAND ${CMAKE_COMMAND} -E tar xvfz cave_circuit_practice_02.dat.zip
@@ -275,28 +275,28 @@ install(
 #VERBATIM)
 
 # Unzip the final_event_03.dat.zip file
-add_custom_command(TARGET unzip_dat PRE_BUILD
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/03
-  COMMAND ${CMAKE_COMMAND} -E tar xvf final_event_03.dat.zip
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/03/final_event_03.dat.zip
-COMMENT "Unpacking final_event_03.dat.zip"
-VERBATIM)
-
+#add_custom_command(TARGET unzip_dat PRE_BUILD
+#  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/03
+#  COMMAND ${CMAKE_COMMAND} -E tar xvf final_event_03.dat.zip
+#  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/03/final_event_03.dat.zip
+#COMMENT "Unpacking final_event_03.dat.zip"
+#VERBATIM)
+#
 # Unzip the final_event/06/final_event_06.dat.zip file
-add_custom_command(TARGET unzip_dat PRE_BUILD
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/06
-  COMMAND ${CMAKE_COMMAND} -E tar xvf final_event_06.dat.zip
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/06/final_event_06.dat.zip
-COMMENT "Unpacking final_event_06.dat.zip"
-VERBATIM)
-
+#add_custom_command(TARGET unzip_dat PRE_BUILD
+#  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/06
+#  COMMAND ${CMAKE_COMMAND} -E tar xvf final_event_06.dat.zip
+#  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/06/final_event_06.dat.zip
+#COMMENT "Unpacking final_event_06.dat.zip"
+#VERBATIM)
+#
 # Unzip the final_event_07.dat.zip file
-add_custom_command(TARGET unzip_dat PRE_BUILD
-  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/07
-  COMMAND ${CMAKE_COMMAND} -E tar xvf final_event_07.dat.zip
-  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/07/final_event_07.dat.zip
-COMMENT "Unpacking final_event_07.dat.zip"
-VERBATIM)
+#add_custom_command(TARGET unzip_dat PRE_BUILD
+#  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/07
+#  COMMAND ${CMAKE_COMMAND} -E tar xvf final_event_07.dat.zip
+#  DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/worlds/final_event/07/final_event_07.dat.zip
+#COMMENT "Unpacking final_event_07.dat.zip"
+#VERBATIM)
 
 install(PROGRAMS
   scripts/subt_docker.bash
