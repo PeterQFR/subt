@@ -33,7 +33,7 @@
 
   # Check if circuit is not defined or is empty/nil
   # Also make sure the given circuit name is valid
-  validCircuits = ["cave", "tunnel", "urban", "finals"]
+  validCircuits = ["cave", "tunnel", "urban", "finals", "spurt"]
   if !defined?(circuit) || circuit == nil || circuit.empty?
     abort("circuit was not defined, exiting now")
   elsif validCircuits.include?(circuit)
@@ -73,9 +73,9 @@
 
   # spawn world offset
   if $circuit == "urban"
-    spawnWorldXPos = 16
-    spawnWorldYPos = 10
-    spawnWorldZPos = 14
+    spawnWorldXPos = 6
+    spawnWorldYPos = 27
+    spawnWorldZPos = 7.5
     spawnWorldYaw = 0
     guiCameraPose = "-2.0 27 15 0 0.868 0"
   elsif $circuit == "finals"
@@ -132,8 +132,8 @@
     "CORO_KAREN" => ["CERBERUS_RMF", "CORO_PAM", "CORO_CRYSTAL"],
     "CORO_MIKE" => ["CERBERUS_RMF", "CORO_PAM", "CORO_CRYSTAL"],
     "EXPLORER_X1" =>["X3", "MARBLE_QAV500", "CERBERUS_GAGARIN", "CERBERUS_RMF", "COSTAR_SHAFTER", "CORO_PAM", "CTU_CRAS_NORLAB_X500", "CORO_CRYSTAL"],
-    "EXPLORER_R2" =>["X3", "X4", "SSCI_X4", "SOPHISTICATED_ENGINEERING_X4", "EXPLORER_DS1", "MARBLE_QAV500", "CERBERUS_M100", "CERBERUS_GAGARIN", "CERBERUS_RMF", "COSTAR_SHAFTER", "CORO_PAM", "CTU_CRAS_NORLAB_X500", "CORO_CRYSTAL", "EMESENT_HOVERMAP"],
-    "CSIRO_DATA61_OZBOT_ATR" =>["X3", "X4", "SSCI_X4", "SOPHISTICATED_ENGINEERING_X4","EXPLORER_DS1", "MARBLE_QAV500", "CERBERUS_M100", "CERBERUS_GAGARIN", "CERBERUS_RMF", "COSTAR_SHAFTER", "CORO_PAM", "CTU_CRAS_NORLAB_X500", "CORO_CRYSTAL", "EMESENT_HOVERMAP"]
+    "EXPLORER_R2" =>["X3", "X4", "SSCI_X4", "SOPHISTICATED_ENGINEERING_X4", "EXPLORER_DS1", "MARBLE_QAV500", "CERBERUS_M100", "CERBERUS_GAGARIN", "CERBERUS_RMF", "COSTAR_SHAFTER", "CORO_PAM", "CTU_CRAS_NORLAB_X500", "CORO_CRYSTAL"],
+    "CSIRO_DATA61_OZBOT_ATR" =>["X3", "X4", "SSCI_X4", "SOPHISTICATED_ENGINEERING_X4","EXPLORER_DS1", "MARBLE_QAV500", "CERBERUS_M100", "CERBERUS_GAGARIN", "CERBERUS_RMF", "COSTAR_SHAFTER", "CORO_PAM", "CTU_CRAS_NORLAB_X500", "CORO_CRYSTAL"]
   }
 
   MARSUPIAL_PARENT_ROBOT_POSITION_OFFSETS = {
@@ -248,7 +248,7 @@
 
 <%
   # disable levels for simple cave worlds
-  $levels = "false"
+  $levels = "true"
   if $worldName.include?('simple_cave_') || $worldName.include?('cave_qual')
     $levels = "false"
   end
@@ -263,6 +263,11 @@
     <name>IGN_GAZEBO_SYSTEM_PLUGIN_PATH</name>
     <value>$LD_LIBRARY_PATH</value>
   </env>
+  <env>
+    <name>IGN_GAZEBO_RESOURCE_PATH</name>
+    <value>/home/developer/subt_ws/install/share/subt_ign/worlds/simulation:$IGN_GAZEBO_RESOURCE_PATH</value>
+  </env>
+
 
   <env>
     <name>IGN_TRANSPORT_TOPIC_STATISTICS</name>
@@ -289,9 +294,6 @@
     <% elsif $worldName.include?('final_event') &&
           !$worldName.include?('practice') %>
       <world_file>final_event/<%= worldNumber %>/<%= $worldName %>.sdf</world_file>
-    <% elsif $worldName.include?('final_prelim') &&
-          !$worldName.include?('practice') %>
-      <world_file>final_prelim/<%= worldNumber %>/<%= $worldName %>.sdf</world_file>
     <% else %>
       <world_file><%= $worldName %>.sdf</world_file>
     <% end %>
@@ -369,7 +371,7 @@
             name="subt::GameLogicPlugin">
       <world_name><%= $worldName %></world_name>
       <ros>false</ros>
-      <ke_height>0.24</ke_height>
+      <ke_height>0.078</ke_height>
 
       <duration_seconds><%= $durationSec %></duration_seconds>
 
@@ -463,7 +465,7 @@
   <%end%>
 
   <!-- The SubT challenge comms broker plugin -->
-  <plugin entity_name="<%= $worldName %>"
+  <!--plugin entity_name="<%= $worldName %>"
           entity_type="world"
           name="subt::CommsBrokerPlugin"
           filename="libCommsBrokerPlugin.so">
@@ -493,7 +495,7 @@
         <modulation>QPSK</modulation>
       </radio_config>
     </comms_model>
-  </plugin>
+  </plugin-->
 
   <!-- The SubT challenge base station plugin -->
   <plugin entity_name="base_station"
@@ -1258,7 +1260,7 @@
       <model name='#{_name}'>
         <pose>#{_x} #{_y} #{_z} 0 0 #{_yaw}</pose>
         <static>true</static>
-        <link name='teambase_link'>
+        <link name='link'>
           <pose>0 0 0.05 0 0 0</pose>
           <visual name='visual'>
             <geometry>

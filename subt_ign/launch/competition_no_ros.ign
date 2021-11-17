@@ -65,7 +65,7 @@
     $durationSec = durationSec
   end
 
-  $worldName = 'tunnel_qual_ign'
+  $worldName = worldName
 
   # If localModel is set, the model URI will use a local path to the model with
   # the assumption that the model is installed in the same workspace as the
