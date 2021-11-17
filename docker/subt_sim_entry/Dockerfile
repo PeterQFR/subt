@@ -50,7 +50,6 @@ RUN sudo apt-get update -qq && sudo DEBIAN_FRONTEND=noninteractive apt-get insta
 # install ROS and required packages
 RUN sudo /bin/sh -c 'echo "deb [trusted=yes] http://packages.ros.org/ros/ubuntu $(lsb_release -sc) main" > /etc/apt/sources.list.d/ros-latest.list' \
  && sudo apt-get update -qq \
-<<<<<<< HEAD
  && sudo DEBIAN_FRONTEND=noninteractive apt-get install -y -qq  \
     python3-catkin-tools \
     python3-rosdep \
@@ -66,26 +65,6 @@ RUN sudo /bin/sh -c 'echo "deb [trusted=yes] http://packages.ros.org/ros/ubuntu 
 #    ros-noetic-rotors-control \
     ros-noetic-theora-image-transport 
 RUN DEBIAN_FRONTEND=noninteractive sudo rosdep init \
-=======
- && sudo apt-get install -y -qq \
-    libpcl-dev \
-    libpcl-conversions-dev \
-    python-catkin-tools \
-    python-rosdep \
-    python-rosinstall \
-    ros-melodic-desktop \
-    ros-melodic-joystick-drivers \
-    ros-melodic-pcl-ros \
-    ros-melodic-pointcloud-to-laserscan \
-    ros-melodic-robot-localization \
-    ros-melodic-spacenav-node \
-    ros-melodic-tf2-sensor-msgs \
-    ros-melodic-twist-mux \
-    ros-melodic-rviz-imu-plugin \
-    ros-melodic-rotors-control \
-    ros-melodic-theora-image-transport \
- && sudo rosdep init \
->>>>>>> master
  && sudo apt-get clean
 
 # sdformat8-sdf conflicts with sdformat-sdf installed from gazebo
@@ -98,7 +77,7 @@ RUN sudo /bin/sh -c 'echo "deb [trusted=yes] http://packages.osrfoundation.org/g
 # install ign-dome
 RUN sudo apt-get update \
 &&  DEBIAN_FRONTEND=noninteractive sudo apt-get install -y -qq \
-    ignition-dome \
+    ignition-fortress \
  && sudo apt-get clean
 
 # install the ros to ign bridge
@@ -124,11 +103,11 @@ RUN . /opt/ros/noetic/setup.sh \
  && rosdep update \
  && sudo apt-get update \
  && DEBIAN_FRONTEND=noninteractive rosdep install -y --from-paths . --ignore-src -r \
-    --skip-keys=ignition-transport9 \
+    --skip-keys=ignition-transport11 \
     --skip-keys=ignition-math6 \
-    --skip-keys=ignition-msgs6 \
+    --skip-keys=ignition-msgs8 \
     --skip-keys=ignition-plugin1 \
-    --skip-keys=ignition-common3 \
+    --skip-keys=ignition-common4 \
     --skip-keys=ignition-launch2 \
  && sudo apt-get clean -qq
 
