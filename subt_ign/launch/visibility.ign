@@ -70,6 +70,10 @@
     <name>IGN_TRANSPORT_SNDHWM</name>
     <value>0</value>
   </env>
+  <env>
+    <name>IGN_GAZEBO_RESOURCE_PATH</name>
+    <value>/home/developer/subt_ws/install/share/subt_ign/worlds/simulation:$IGN_GAZEBO_RESOURCE_PATH</value>
+  </env>
 
   <!-- Unlimited Ignition Transport receive message buffer -->
   <env>

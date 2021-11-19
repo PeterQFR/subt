@@ -87,7 +87,7 @@
   else
     spawnWorldXPos = 0
     spawnWorldYPos = 0
-    spawnWorldZPos = 0
+    spawnWorldZPos = 6
     spawnWorldYaw = 0
     guiCameraPose = "-6.3 -4.2 3.6 0 0.268 0.304"
   end
@@ -262,13 +262,19 @@
   <env>
     <name>IGN_GAZEBO_SYSTEM_PLUGIN_PATH</name>
     <value>$LD_LIBRARY_PATH</value>
-  </env>
+</env>
+  <% if $circuit.include?('spurt') %>  
   <env>
     <name>IGN_GAZEBO_RESOURCE_PATH</name>
     <value>/home/developer/subt_ws/install/share/subt_ign/worlds/simulation:$IGN_GAZEBO_RESOURCE_PATH</value>
   </env>
+  <% else %>
+  <env>
+    <name>IGN_GAZEBO_RESOURCE_PATH</name>
+    <value>$IGN_GAZEBO_RESOURCE_PATH</value>
+  </env>
 
-
+  <% end %>
   <env>
     <name>IGN_TRANSPORT_TOPIC_STATISTICS</name>
     <value>1</value>
@@ -294,6 +300,8 @@
     <% elsif $worldName.include?('final_event') &&
           !$worldName.include?('practice') %>
       <world_file>final_event/<%= worldNumber %>/<%= $worldName %>.sdf</world_file>
+    <% elsif $circuit.include?('spurt') %>
+      <world_file><%= $worldName %>.sdf</world_file>
     <% else %>
       <world_file><%= $worldName %>.sdf</world_file>
     <% end %>
@@ -464,8 +472,8 @@
   </executable_wrapper>
   <%end%>
 
-  <!-- The SubT challenge comms broker plugin -->
-  <!--plugin entity_name="<%= $worldName %>"
+  <!-- The SubT challenge comms broker plugin >
+  <plugin entity_name="<%= $worldName %>"
           entity_type="world"
           name="subt::CommsBrokerPlugin"
           filename="libCommsBrokerPlugin.so">
@@ -498,11 +506,11 @@
   </plugin-->
 
   <!-- The SubT challenge base station plugin -->
-  <plugin entity_name="base_station"
+  <!--plugin entity_name="base_station"
           entity_type="model"
           name="subt::BaseStationPlugin"
           filename="libBaseStationPlugin.so">
-  </plugin>
+  </plugin-->
 
 
 <%
@@ -1390,6 +1398,7 @@
           end
           modelURI = "#{fuelPrefix}/#{robotName}"
         end
+        #puts "Robot is spawned"
         robotSpawned += 1
 
         spawnStringTmp = spawner(name, modelURI, $worldName, robot.pos.x, robot.pos.y, robot.pos.z, 0, 0, robot.rot.yaw)
