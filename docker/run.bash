@@ -98,7 +98,7 @@ docker run -it \
   -v "/tmp/.X11-unix:/tmp/.X11-unix" \
   -v "/etc/localtime:/etc/localtime:ro" \
   -v "/dev/input:/dev/input" \
-  -v "$HOME/spurt_sim:/home/developer/subt_ws/install/share/subt_ign/worlds/simulation:ro" \
+  -v "$HOME/spurt_sim:/home/developer/subt_ws/install/share/subt_ign/worlds/simulation" \
   --network host \
   --name simulation \
   --rm \
