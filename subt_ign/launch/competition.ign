@@ -87,7 +87,7 @@
   else
     spawnWorldXPos = 0
     spawnWorldYPos = 0
-    spawnWorldZPos = 6
+    spawnWorldZPos = 1.1
     spawnWorldYaw = 0
     guiCameraPose = "-6.3 -4.2 3.6 0 0.268 0.304"
   end

@@ -53,13 +53,13 @@
     <!-- RGBD -->
     <group if="$(arg rgbd_cam)">
       <!-- Front RGBD -->
-      <node
+      <!--node
         pkg="ros_ign_bridge"
         type="parameter_bridge"
         name="ros_ign_bridge_rgbd_front"
         args="$(arg sensor_prefix)/camera_front/points@sensor_msgs/PointCloud2[ignition.msgs.PointCloudPacked">
       <remap from="$(arg sensor_prefix)/camera_front/points" to="rgbd_camera/front/depth/points"/>
-      </node>
+      </node-->
       <node
         pkg="ros_ign_image"
         type="image_bridge"
@@ -77,13 +77,13 @@
         <remap from="output/image" to="front/optical/depth" />
       </node>
       <!-- Port RGBD -->
-      <node
+      <!--node
         pkg="ros_ign_bridge"
         type="parameter_bridge"
         name="ros_ign_bridge_rgbd_port"
         args="$(arg sensor_prefix)/camera_port/points@sensor_msgs/PointCloud2[ignition.msgs.PointCloudPacked">
       <remap from="$(arg sensor_prefix)/camera_port/points" to="rgbd_camera/port/depth/points"/>
-      </node>
+      </node-->
       <node
         pkg="ros_ign_image"
         type="image_bridge"
@@ -100,13 +100,13 @@
         <remap from="output/image" to="port/optical/depth" />
       </node>
       <!-- Starboard RGBD -->
-      <node
+      <!--node
         pkg="ros_ign_bridge"
         type="parameter_bridge"
         name="ros_ign_bridge_rgbd_starboard"
         args="$(arg sensor_prefix)/camera_starboard/points@sensor_msgs/PointCloud2[ignition.msgs.PointCloudPacked">
       <remap from="$(arg sensor_prefix)/camera_starboard/points" to="rgbd_camera/starboard/depth/points"/>
-      </node>
+      </node-->
       <node
         pkg="ros_ign_image"
         type="image_bridge"
@@ -124,13 +124,13 @@
         <remap from="output/image" to="starboard/optical/depth" />
     </node>
      <!-- Downward RGBD -->
-      <node
+      <!--node
         pkg="ros_ign_bridge"
         type="parameter_bridge"
         name="ros_ign_bridge_rgbd_downward"
         args="$(arg sensor_prefix)/camera_down/points@sensor_msgs/PointCloud2[ignition.msgs.PointCloudPacked">
       <remap from="$(arg sensor_prefix)/camera_down/points" to="rgbd_camera/down/depth/points"/>
-      </node>
+      </node-->
       <node
         pkg="ros_ign_image"
         type="image_bridge"
@@ -147,6 +147,31 @@
         <remap from="input/image" to="down/depth" />
         <remap from="output/image" to="down/optical/depth" />
       </node>
+      <node
+        pkg="ros_ign_bridge"
+        type="parameter_bridge"
+        name="ros_ign_bridge_camera_front_right"
+        args="$(arg sensor_prefix)/camera_front_right/camera_info@sensor_msgs/CameraInfo[ignition.msgs.CameraInfo">
+        <remap from="$(arg sensor_prefix)/camera_front_right/camera_info" to="front_right/camera_info"/>
+      </node>
+      <node
+        pkg="ros_ign_image"
+        type="image_bridge"
+        name="ros_ign_image_camera_front_right"
+        args="$(arg sensor_prefix)/camera_front_right/image">
+        <remap from="$(arg sensor_prefix)/camera_front_right/image" to="front_right/image_raw"/>
+      </node>
+
+      <node
+        pkg="subt_ros"
+        type="optical_frame_publisher"
+        name="optical_frame_publisher_front_right">
+        <remap from="input/image" to="front_right/image_raw" />
+        <remap from="output/image" to="front_right/optical/image_raw" />
+        <remap from="input/camera_info" to="front_right/camera_info" />
+        <remap from="output/camera_info" to="front_right/optical/camera_info" />
+      </node>
+
 
     </group>
 
